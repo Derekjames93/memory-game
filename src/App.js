@@ -2,7 +2,7 @@ import './components/MemoryCard'
 import './App.css';
 
 import MemoryCard from './components/MemoryCard';
-import { Component } from 'react';
+import { Component, useState } from 'react';
 
 
 function generateDeck() {
@@ -29,13 +29,20 @@ function shuffle(a) {
 
 
 class App extends Component {
-  constructor(props) {
+  
+  // const [deck, setDeck] = useState(generateDeck());
+  // const [pickedCards, setPickedCards] = useState([])
+
+  constructor(props){
     super(props)
-    this.state = {
-      deck: generateDeck(),
-      pickedCards: [],
+    this.state= {
+      deck: [],
+      pickedCards: []
     }
   }
+      
+    
+  
 
 reset = () => {
   this.setState({
@@ -44,11 +51,11 @@ reset = () => {
   })
 }
 
-  pickCard = (cardIndex) => {
+pickCard = (cardIndex) => {
     if (this.state.deck[cardIndex].isFlipped) {
       return
     }
-    const cardToFlip = this.state.deck[cardIndex]
+    const cardToFlip = {...this.state.deck[cardIndex]}
     cardToFlip.isFlipped = true
 
     let newPickedCards = this.state.pickedCards.concat(cardIndex)
@@ -73,10 +80,12 @@ reset = () => {
       deck: newDeck,
       pickedCards: newPickedCards
     })
+    
   }
 
-  unflipCards = (card1Index, card2Index) => {
-    let card1 = this.state.deck[card1Index]
+
+unflipCards = (card1Index,card2Index) => {
+    const card1 =  this.state.deck[card1Index]
     let card2 = this.state.deck[card2Index]
     card1.isFlipped = false
     card2.isFlipped = false
@@ -90,19 +99,24 @@ reset = () => {
         return card2
 
       }
-      return card
+      return card;
     })
     
       
-    this.setState({deck: newDeck})
+   
+    this.setState({
+      deck:newDeck
+    })
 
-}
+  };
 
 
   render() {
+
+  
     console.log(this.state.deck)
     const cardsJSX = this.state.deck.map((card, index) => {
-      return <MemoryCard pickCard={this.pickCard.bind(this, index)} key={index} symbol={card.symbol} isFlipped={card.isFlipped} />
+      return <MemoryCard pickCard={() => {this.pickCard(index)}} key={index} symbol={card.symbol} isFlipped={card.isFlipped} />
     });
     return (
       <div className="App">
